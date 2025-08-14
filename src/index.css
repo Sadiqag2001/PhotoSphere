@@ -1,0 +1,33 @@
+@import "tailwindcss";
+@font-face {
+  font-family: "headerfont";
+  src: url("./assets/fonts/headerfont.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  font-family: 'poppins', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  color: #242424;
+  background-color: white;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+   --light-blue: #58A0C8;
+  --dark-blue: #113F67;
+  --mid-blue: #34699A;
+  --beige: #e9dfc3;
+  --light-peach: #fff8f8;
+  --orange: #ff8040;
+
+}
+h1{
+  font-family: "headerfont", sans-serif;
+}
