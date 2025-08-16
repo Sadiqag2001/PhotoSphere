@@ -5,7 +5,7 @@ import { IoIosMail } from "react-icons/io";
 
 function Footer() {
   return (
-    <div className='w-full h-30% bg-[#021526] text-gray-300 '>
+    <div className='relative w-full h-30% bg-[#021526] text-gray-300 '>
     <div className='flex flex-row justify-between items-center px-10 pt-10'>
       <div className='flex flex-col text-white text-center '>
         <h1 className='text-3xl text-white'>PhotoSphere</h1>

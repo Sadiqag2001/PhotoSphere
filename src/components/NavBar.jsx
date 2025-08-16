@@ -3,7 +3,7 @@ import { ImSearch } from "react-icons/im";
 
 function NavBar() {
   return (
-    <div className='absolute z-20 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none '>
+    <div className='absolute z-30 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none '>
         <div className='flex flex-row justify-between items-center gap-8'>
             <h1 className='text-4xl text-white cursor-pointer'>PhotoSphere</h1>
         </div>
