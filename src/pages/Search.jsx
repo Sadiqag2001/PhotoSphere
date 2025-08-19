@@ -31,7 +31,7 @@ function Search() {
       </div>
 
       {selectedPhoto && (
-        <div className="absolute h-full w-full inset-0 flex justify-center items-start bg-black/70 backdrop-blur-lg z-50" onClick={() => setSelectedPhoto(null)}>
+        <div className="sticky shadow-2xl h-full w-full inset-0 flex justify-center items-start bg-black/70 backdrop-blur-lg z-50" onClick={() => setSelectedPhoto(null)}>
           <div className="bg-white p-4 rounded-lg max-w-3xl w-full relative" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setSelectedPhoto(null)} className="absolute top-5 right-5 text-gray-600 bg-white/70 rounded-full text-5xl"> <ImCancelCircle /></button>
             <img src={selectedPhoto.src.large} alt={selectedPhoto.photographer} className="rounded-lg w-full h-full" />

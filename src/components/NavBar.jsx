@@ -24,7 +24,7 @@ function NavBar() {
         </div>
         <div className='relative w-full sm:w-auto '> 
           <form  onSubmit={handleSubmit}>
-            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder='What are you looking for? ' className='lg:pl-5 lg:pr-40 sm:pl-3 sm:pr-10 md:pl-5 md:pr-12 py-3 rounded-3xl border border-white focus:outline-none focus:ring-2 focus:ring-gray-300' />
+            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder='What are you looking for? ' className='lg:pl-5 lg:pr-40 sm:pl-3 sm:pr-10 md:pl-5 md:pr-12 py-3 rounded-3xl border border-white focus:outline-none focus:ring-2 sm:placeholder:text-sm focus:ring-gray-300' />
             <button type="submit" className='absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600'> <ImSearch/></button>
         </form></div>
         <div className='flex flex-row gap-6 justify-center items-center mr-6 cursor-pointer'>
