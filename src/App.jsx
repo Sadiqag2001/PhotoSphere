@@ -1,14 +1,19 @@
 import './index.css'
-import NavBar from './components/NavBar'
 import Hero from './pages/Hero'
 import Footer from './components/Footer'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Search from './pages/Search'
 
 function App() {
-
   return (
     <>
-    <Hero />
-    <Footer />
+    <Router>
+      <Routes>
+        <Route path="/" element={<Hero />} />
+        <Route path="/search" element={<Search />} />
+      </Routes>
+     <Footer />
+    </Router>
     </>
   )
 }

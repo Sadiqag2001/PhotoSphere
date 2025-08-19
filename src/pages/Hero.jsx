@@ -31,7 +31,7 @@ const Hero = () => {
   }, [photos]);
 
   return (
-    <div className="w-full h-screen relative text-white overflow-hidden">
+    <div className="w-full max-h-full h-screen py-80 relative text-white overflow-hidden">
     
       <div className="absolute inset-0 z-0">
         {photos.map((photo, index) => (
@@ -50,7 +50,7 @@ const Hero = () => {
       <div className="relative z-20 flex flex-col gap-3 justify-center items-center h-full">
         <h1 className="text-8xl font-bold">PhotoSphere</h1>
         <p className="text-md">By Abubakar Ado Garba</p>
-        <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-gray-300'> Pexels</a></p>
+        <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-gray-300 underline'> Pexels</a></p>
         <button className="px-4 py-2 bg-white/15 text-white text-md rounded-3xl cursor-pointer hover:bg-white/30">
           Explore
         </button>
