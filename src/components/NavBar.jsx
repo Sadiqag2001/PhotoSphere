@@ -3,6 +3,7 @@ import { ImSearch } from "react-icons/im";
 import { usePhotoStore } from '../store/photostore';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function NavBar() {
   const searchPhotos = usePhotoStore((state) => state.searchPhotos);
@@ -18,7 +19,7 @@ function NavBar() {
 
 
   return (
-    <div className='absolute z-30 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none '>
+    <div className='fixed backdrop-blur-xs z-30 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none '>
         <div className='flex flex-row justify-between items-center gap-8'>
             <h1 className='text-4xl text-white cursor-pointer'>PhotoSphere</h1>
         </div>
