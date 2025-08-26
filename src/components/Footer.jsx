@@ -5,7 +5,7 @@ import { IoIosMail } from "react-icons/io";
 
 function Footer() {
   return (
-    <div className='relative w-full h-30% bg-[#021526] text-gray-300 '>
+    <div className='relative w-full h-30% bg-[#010f1b] text-gray-300 '>
     <div className='flex flex-row justify-between items-center px-10 pt-10'>
       <div className='flex flex-col text-white text-center '>
         <h1 className='lg:text-3xl sm:text-xl md:text-2xl text-white'>PhotoSphere</h1>
@@ -22,7 +22,7 @@ function Footer() {
         <a className='shadow-2xl' href="mailto:abubakaradogarba@gmail.com" target='_blank'><IoIosMail/></a>
       </div>
     </div>
-      <p className='p-3 block justify-center items-center text-center lg:text-2xl sm:text-xs md:text-sm text-white font-thin'>copyrights © PhotoSphere 2025</p>
+      <p className='p-3 block justify-center items-center text-center lg:text-xl sm:text-xs md:text-sm text-white font-thin'>copyrights © PhotoSphere 2025</p>
     </div>
   )
 }
