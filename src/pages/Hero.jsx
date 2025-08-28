@@ -8,10 +8,13 @@ import React, { useEffect, useState } from 'react'
 // import BgImg6 from "../assets/bgImg6.jpg";
 import { usePhotoStore } from '../store/photostore';
 import NavBar from '../components/NavBar';
+import Explore from './Explore';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const fetchTrending = usePhotoStore((state) => state.fetchTrending);
   const photos = usePhotoStore((state) => state.photos);
+  const navigate = useNavigate();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -19,6 +22,9 @@ const Hero = () => {
     fetchTrending();
   }, [fetchTrending]);
 
+  const handleExplore = () => {
+    navigate("/explore")
+  }
 
   useEffect(() => {
     if (photos.length === 0) return;
@@ -51,7 +57,7 @@ const Hero = () => {
         <h1 className="text-8xl font-bold">PhotoSphere</h1>
         <p className="text-md">By Abubakar Ado Garba</p>
         <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-gray-300 underline'> Pexels</a></p>
-        <button className="px-4 py-2 bg-white/15 text-white text-md rounded-3xl cursor-pointer hover:bg-white/30">
+        <button onClick={handleExplore} className="px-4 py-2 bg-white/15 text-white text-md rounded-3xl cursor-pointer hover:bg-white/30">
           Explore
         </button>
       </div>

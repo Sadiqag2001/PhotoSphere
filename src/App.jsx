@@ -4,21 +4,40 @@ import Footer from './components/Footer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Search from './pages/Search'
 import Explore from './pages/Explore'
+import Register from './pages/Register'
+import Login from './pages/Login'
+import Favourites from './pages/Favourites'
+import NavBar from './components/NavBar'
+import ExplorePreview from './pages/ExplorePreview'
+
+// Home page with Hero + Explore preview
+function Home() {
+  return (
+    <>
+      <Hero />
+      <ExplorePreview /> 
+    </>
+  )
+}
 
 function App() {
   return (
-    <>
     <Router>
-      <Routes>
-        <Route path="/" element={<Hero />} />
-        <Route path="/search" element={<Search />} />
-        <Route exact path='/explore' element={<Explore />}>
-        </Route>
-      </Routes>
-        <Explore />
-     <Footer />
+      <div className="flex flex-col min-h-screen">
+        <NavBar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/favourites" element={<Favourites />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
-    </>
   )
 }
 

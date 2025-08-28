@@ -1,26 +1,27 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { ImCancelCircle } from "react-icons/im";
 import { CiHeart } from "react-icons/ci";
-import { usePhotoStore } from "../store/photostore";
 import { FiDownload } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
+import { usePhotoStore } from "../store/photostore";
+import { Link } from "react-router-dom";
 
-function Explore() {
+function ExplorePreview() {
   const photos = usePhotoStore((state) => state.photos);
   const fetchTrending = usePhotoStore((state) => state.fetchTrending);
+  const toggleFavourite = usePhotoStore((state) => state.toggleFavourite);
+  const favourites = usePhotoStore((state) => state.favourites);
 
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [likedPhotos, setLikedPhotos] = useState({});
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchTrending(page);
-  }, [fetchTrending, page]);
+    if (photos.length === 0) {
+      fetchTrending();
+    }
+  }, [fetchTrending, photos.length]);
 
-  const toggleLike = (id) => {
-    setLikedPhotos((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+  const isFavourite = (photoId) =>
+    favourites.some((fav) => fav.id === photoId);
 
   const handleDownload = async (url, filename) => {
     try {
@@ -38,66 +39,47 @@ function Explore() {
     }
   };
 
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 300 >=
-      document.documentElement.scrollHeight
-    ) {
-      if (!loading) {
-        setLoading(true);
-        setPage((prev) => prev + 1);
-        setTimeout(() => setLoading(false), 800);
-      }
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
   return (
-    <div className="p-10 mt-15">
-      <h2 className="text-5xl text-gray-800 font-bold mb-6">Explore</h2>
+    <section id="explore-preview" className="p-10 bg-[#dedede] text-gray-800">
+      <h2 className="text-4xl font-bold mb-6">Explore</h2>
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-        {photos.length > 0 ? (
-          photos.map((photo) => (
-            <div
-              key={photo.id}
-              className="break-inside-avoid rounded-lg overflow-hidden shadow-md hover:brightness-75 duration-300 ease-in-out"
-            >
-              <img
-                src={photo.src.medium}
-                srcSet={`${photo.src.medium} 640w, ${photo.src.large} 940w, ${photo.src.large2x} 1880w`}
-                sizes="(max-width: 768px) 100vw, 33vw"
-                alt={photo.photographer}
-                className="w-full h-auto rounded-lg cursor-pointer"
-                onClick={() => setSelectedPhoto(photo)}
-              />
-              <div className="flex justify-between items-center px-2 py-2">
-                <p className="font-normal text-sm">By {photo.photographer}</p>
-                <button
-                  onClick={() => toggleLike(photo.id)}
-                  className={`text-4xl ${
-                    likedPhotos[photo.id] ? "text-red-600" : "text-gray-600"
-                  }`}
-                >
-                  <CiHeart />
-                </button>
-              </div>
+        {photos.slice(0, 6).map((photo) => (
+          <div
+            key={photo.id}
+            className="break-inside-avoid rounded-lg overflow-hidden shadow-md hover:brightness-75 duration-300 ease-in-out"
+          >
+            <img
+              src={photo.src.medium}
+              srcSet={`${photo.src.medium} 640w, ${photo.src.large} 940w, ${photo.src.large2x} 1880w`}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              alt={photo.photographer}
+              className="w-full h-auto rounded-lg cursor-pointer"
+              onClick={() => setSelectedPhoto(photo)}
+            />
+            <div className="flex justify-between items-center px-2 py-2">
+              <p className="font-normal text-sm">By {photo.photographer}</p>
+              <button
+                onClick={() => toggleFavourite(photo)}
+                className={`text-3xl ${
+                  isFavourite(photo.id) ? "text-red-600" : "text-gray-400"
+                }`}
+              >
+                <CiHeart />
+              </button>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500 py-10">
-            No results found. Try another search.
-          </p>
-        )}
+          </div>
+        ))}
       </div>
 
-      {loading && (
-        <div className="text-center text-gray-500 py-6">Loading more photos...</div>
-      )}
+      <div className="mt-8 text-center">
+        <Link
+          to="/explore"
+          className="px-6 py-2 text-white shadow-xl bg-gray-600 rounded-lg hover:bg-gray-700 transition"
+        >
+          See more →
+        </Link>
+      </div>
 
       {selectedPhoto && (
         <div
@@ -120,7 +102,6 @@ function Explore() {
               alt={selectedPhoto.photographer}
               className="rounded-lg w-full h-auto object-contain"
             />
-            
 
             <div className="mt-4 flex justify-between items-center">
               <p className="text-gray-700 font-normal text-lg">
@@ -151,8 +132,8 @@ function Explore() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
-export default Explore;
+export default ExplorePreview;
