@@ -12,7 +12,6 @@ function Explore() {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [likedPhotos, setLikedPhotos] = useState({});
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchTrending(page);
@@ -37,24 +36,6 @@ function Explore() {
       console.error("Download failed:", err);
     }
   };
-
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop + 300 >=
-      document.documentElement.scrollHeight
-    ) {
-      if (!loading) {
-        setLoading(true);
-        setPage((prev) => prev + 1);
-        setTimeout(() => setLoading(false), 800);
-      }
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
 
   return (
     <div className="p-10 mt-15">
@@ -94,10 +75,6 @@ function Explore() {
           </p>
         )}
       </div>
-
-      {loading && (
-        <div className="text-center text-gray-500 py-6">Loading more photos...</div>
-      )}
 
       {selectedPhoto && (
         <div

@@ -56,7 +56,7 @@ const Hero = () => {
       <div className="relative z-20 flex flex-col gap-3 justify-center items-center h-full">
         <h1 className="text-8xl font-bold">PhotoSphere</h1>
         <p className="text-md">By Abubakar Ado Garba</p>
-        <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-gray-300 underline'> Pexels</a></p>
+        <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-red-300 underline'> Pexels</a></p>
         <button onClick={handleExplore} className="px-4 py-2 bg-white/15 text-white text-md rounded-3xl cursor-pointer hover:bg-white/30">
           Explore
         </button>

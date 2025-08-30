@@ -4,7 +4,7 @@ function Favourites() {
   const favourites = usePhotoStore((state) => state.favourites);
 
   if (favourites.length === 0) {
-    return <p className="text-center text-gray-500 mt-10">No favourites yet.</p>;
+    return <p className="text-center text-gray-500 pt-30 mt-10">No favourites yet.</p>;
   }
 
   return (

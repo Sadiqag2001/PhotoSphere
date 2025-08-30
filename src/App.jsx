@@ -9,13 +9,13 @@ import Login from './pages/Login'
 import Favourites from './pages/Favourites'
 import NavBar from './components/NavBar'
 import ExplorePreview from './pages/ExplorePreview'
+import ContactUs from './pages/ContactUs'
 
-// Home page with Hero + Explore preview
 function Home() {
   return (
     <>
       <Hero />
-      <ExplorePreview /> 
+      <ExplorePreview />
     </>
   )
 }
@@ -33,6 +33,7 @@ function App() {
             <Route path="/favourites" element={<Favourites />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path='/contact' element={<ContactUs />} />
           </Routes>
         </main>
         <Footer />

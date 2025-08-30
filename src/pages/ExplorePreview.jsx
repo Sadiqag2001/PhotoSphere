@@ -75,7 +75,7 @@ function ExplorePreview() {
       <div className="mt-8 text-center">
         <Link
           to="/explore"
-          className="px-6 py-2 text-white shadow-xl bg-gray-600 rounded-lg hover:bg-gray-700 transition"
+          className="px-6 py-4 text-[#dedede] shadow-2xl bg-[#010f1b] rounded-lg hover:bg-[#000b13] transition"
         >
           See more →
         </Link>

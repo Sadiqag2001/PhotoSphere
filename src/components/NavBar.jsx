@@ -17,7 +17,7 @@ function NavBar() {
   };
 
   return (
-    <div className='fixed backdrop-blur-xs z-30 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none '>
+    <div className='absolute z-30 top-0 left-0 w-full flex flex-row justify-between items-center p-4 bg-none'>
       <div className='flex flex-row justify-between items-center gap-8'>
         <h1 
           onClick={() => navigate("/")} 
@@ -58,6 +58,11 @@ function NavBar() {
           onClick={() => navigate("/favourites")} 
           className='hover:text-gray-300 transform transition duration-200'>
           Favourites
+        </p>
+        <p 
+          onClick={() => navigate("/contact")} 
+          className='hover:text-gray-300 transform transition duration-200'>
+          Contact Us
         </p>
         <div onClick={() => navigate("/login")}>
           <RxAvatar size={26} />
