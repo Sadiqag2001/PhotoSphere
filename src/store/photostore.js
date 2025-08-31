@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import axios from "axios";
-import { useUserStore } from "./userStore";
 
 const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
 

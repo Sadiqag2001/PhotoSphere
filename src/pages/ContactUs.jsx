@@ -17,7 +17,7 @@ const ContactUs = () => {
   return (
     <div className='w-full min-h-screen bg-[#010f1b] py-16 px-6 sm:px-12 lg:px-24 text-gray-800 flex flex-col'>
       <div className='flex justify-center items-center pb-10 text-4xl sm:text-5xl lg:text-6xl'>
-        <h2>Contact Us</h2>
+        <h2 className='text-[#dedede] pt-5'>Contact Us</h2>
       </div>
 
       <div className='flex flex-col lg:flex-row justify-center items-stretch bg-[#dedede] shadow-4xl rounded-2xl w-full lg:w-[90%] mx-auto'>
