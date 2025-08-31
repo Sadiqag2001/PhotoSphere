@@ -7,7 +7,10 @@ const apiKey = import.meta.env.VITE_PEXELS_API_KEY;
 export const usePhotoStore = create((set, get) => ({
   photos: [],
   page: 1, 
-  favourites: JSON.parse(localStorage.getItem("favourites")) || [],
+  user: null,
+
+  login: (user) => set({ user }),
+  logout: () => set({ user: null, favourites: [] }),
   lastQuery: localStorage.getItem("lastQuery") || "",
 
   searchPhotos: async (query) => {
@@ -66,22 +69,5 @@ fetchExplore: async () => {
   }
 },
 
-  toggleFavourite: (photo) => {
-    const { user } = useUserStore.getState();
-    if (!user) {
-      alert("Please log in to save favourites.");
-      return;
-    }
-
-    const state = get();
-    const isFavourite = state.favourites.some((fav) => fav.id === photo.id);
-
-    const updated = isFavourite
-      ? state.favourites.filter((fav) => fav.id !== photo.id)
-      : [...state.favourites, photo];
-
-    localStorage.setItem("favourites", JSON.stringify(updated));
-    set({ favourites: updated });
-  },
 }));
 

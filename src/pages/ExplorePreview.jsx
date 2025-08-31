@@ -5,12 +5,12 @@ import { FiDownload } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa";
 import { usePhotoStore } from "../store/photostore";
 import { Link } from "react-router-dom";
+import { useUserStore } from "../store/userStore";
 
 function ExplorePreview() {
   const photos = usePhotoStore((state) => state.photos);
   const fetchTrending = usePhotoStore((state) => state.fetchTrending);
-  const toggleFavourite = usePhotoStore((state) => state.toggleFavourite);
-  const favourites = usePhotoStore((state) => state.favourites);
+  const { addFavourite, removeFavourite, favourites } = useUserStore();
 
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
@@ -20,8 +20,7 @@ function ExplorePreview() {
     }
   }, [fetchTrending, photos.length]);
 
-  const isFavourite = (photoId) =>
-    favourites.some((fav) => fav.id === photoId);
+  const isFavourite = (id) => favourites.some((f) => f.id === id);
 
   const handleDownload = async (url, filename) => {
     try {
@@ -41,7 +40,7 @@ function ExplorePreview() {
 
   return (
     <section id="explore-preview" className="p-10 bg-[#dedede] text-gray-800">
-      <h2 className="text-4xl font-bold mb-6">Explore</h2>
+      <h2 className="text-5xl font-bold mb-6">Explore</h2>
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
         {photos.slice(0, 6).map((photo) => (
@@ -60,13 +59,17 @@ function ExplorePreview() {
             <div className="flex justify-between items-center px-2 py-2">
               <p className="font-normal text-sm">By {photo.photographer}</p>
               <button
-                onClick={() => toggleFavourite(photo)}
-                className={`text-3xl ${
-                  isFavourite(photo.id) ? "text-red-600" : "text-gray-400"
-                }`}
-              >
-                <CiHeart />
-              </button>
+                  onClick={() =>
+                    isFavourite(photo.id)
+                      ? removeFavourite(photo.id)
+                      : addFavourite(photo)
+                  }
+                  className={`text-4xl ${
+                    isFavourite(photo.id) ? "text-red-600" : "text-gray-600"
+                  }`}
+                >
+                  <CiHeart />
+                </button>
             </div>
           </div>
         ))}
@@ -81,57 +84,40 @@ function ExplorePreview() {
         </Link>
       </div>
 
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-lg z-50 flex justify-center items-center overflow-auto"
+{selectedPhoto && (
+      <div
+        className="fixed inset-0 flex justify-center items-center bg-black/90 z-50"
+        onClick={() => setSelectedPhoto(null)}
+      >
+        <button
           onClick={() => setSelectedPhoto(null)}
+          className="absolute top-5 right-5 text-white bg-black/50 rounded-full text-4xl p-2"
         >
-          <div
-            className="bg-white p-4 rounded-lg max-w-4xl w-full relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 text-gray-600 bg-white/70 rounded-full text-3xl"
-            >
-              <ImCancelCircle />
-            </button>
+          <ImCancelCircle />
+        </button>
 
-            <img
-              src={selectedPhoto.src.large2x}
-              alt={selectedPhoto.photographer}
-              className="rounded-lg w-full h-auto object-contain"
-            />
+        <img
+          src={selectedPhoto.src.large2x || selectedPhoto.src.large}
+          alt={selectedPhoto.photographer}
+          className="w-screen h-screen object-contain"
+        />
 
-            <div className="mt-4 flex justify-between items-center">
-              <p className="text-gray-700 font-normal text-lg">
-                Photographer: {selectedPhoto.photographer}
-              </p>
-              <div className="flex gap-3">
-                <a
-                  href={selectedPhoto.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-row gap-3 justify-center items-center underline rounded-2xl px-4 py-3 text-gray-800"
-                >
-                  View on Pexels <FaArrowRight />
-                </a>
-                <button
-                  onClick={() =>
-                    handleDownload(
-                      selectedPhoto.src.original,
-                      `photo-${selectedPhoto.id}.jpg`
-                    )
-                  }
-                  className="rounded-2xl px-4 py-3 bg-gray-500/50 text-gray-800 shadow hover:bg-gray-700/50 flex items-center gap-2"
-                >
-                  <FiDownload /> Download
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="absolute bottom-6 flex gap-4">
+          <a
+            href={selectedPhoto.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-row gap-3 justify-center items-center underline rounded-2xl px-4 py-3 text-gray-800">
+            View on Pexels <FaArrowRight />
+          </a>
+          <button
+            onClick={() =>  handleDownload( selectedPhoto.src.original, `photo-${selectedPhoto.id}.jpg`)}
+              className="rounded-2xl px-4 py-3 bg-gray-500/50 text-gray-800 shadow hover:bg-gray-700/50 flex items-center gap-2">
+              <FiDownload /> Download
+          </button>
         </div>
-      )}
+      </div>
+    )}
     </section>
   );
 }

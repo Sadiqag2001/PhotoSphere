@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa6";
 import { usePhotoStore } from "../store/photostore";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../store/userStore";
 
 
 function Register() {
@@ -78,7 +79,7 @@ function Register() {
 
     }
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full pt-20 mt-15 flex justify-center items-center">
       <div className="flex bg-[#362c48] shadow-2xl w-[90%] h-[90%] rounded-2xl">
         <div className="flex w-[50%] relative rounded-2xl overflow-hidden">
               {photos.map((photo, index) => (
@@ -131,7 +132,7 @@ function Register() {
                 </span>
               </p>
           </div>
-          <div className="flex flex-col gap-4 w-[100%] mt-8">
+          <div className="flex flex-col gap-4 w-[100%] pt-10 mt-8">
             <div className="flex gap-3 w-[100%]">
               <input
                 type="text"
