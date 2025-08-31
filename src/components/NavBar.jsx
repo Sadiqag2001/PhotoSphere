@@ -47,7 +47,7 @@ function NavBar() {
         </button>
       </form>
 
-      <div className="hidden md:flex gap-6 items-center text-white">
+      <div className="hidden md:flex gap-6 cursor-pointer items-center text-white">
         <p onClick={() => navigate("/")} className="hover:text-gray-300">
           Home
         </p>
