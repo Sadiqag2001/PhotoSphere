@@ -13,7 +13,6 @@ function Explore() {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [page, setPage] = useState(1);
 
-  
   const { addFavourite, removeFavourite, favourites } = useUserStore();
   const isFavourite = (id) => favourites.some((f) => f.id === id);
 
@@ -38,8 +37,10 @@ function Explore() {
   };
 
   return (
-    <div className="p-10 mt-15">
-      <h2 className="text-5xl text-gray-800 font-bold mb-6">Explore</h2>
+    <div className="px-4 sm:px-6 lg:px-10 py-10 mt-10">
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl text-gray-800 font-bold mb-6">
+        Explore
+      </h2>
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
         {photos.length > 0 ? (
@@ -64,7 +65,7 @@ function Explore() {
                       ? removeFavourite(photo.id)
                       : addFavourite(photo)
                   }
-                  className={`text-4xl ${
+                  className={`text-3xl sm:text-4xl ${
                     isFavourite(photo.id) ? "text-red-600" : "text-gray-600"
                   }`}
                 >
@@ -80,40 +81,47 @@ function Explore() {
         )}
       </div>
 
-{selectedPhoto && (
-      <div
-        className="fixed inset-0 flex justify-center items-center bg-black/90 z-50"
-        onClick={() => setSelectedPhoto(null)}
-      >
-        <button
+      {selectedPhoto && (
+        <div
+          className="fixed inset-0 flex justify-center items-center bg-black/90 z-50"
           onClick={() => setSelectedPhoto(null)}
-          className="absolute top-5 right-5 text-white bg-black/50 rounded-full text-4xl p-2"
         >
-          <ImCancelCircle />
-        </button>
-
-        <img
-          src={selectedPhoto.src.large2x || selectedPhoto.src.large}
-          alt={selectedPhoto.photographer}
-          className="w-screen h-screen object-contain"
-        />
-
-        <div className="absolute bottom-6 flex gap-4">
-          <a
-            href={selectedPhoto.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-row gap-3 justify-center items-center underline rounded-2xl px-4 py-3 text-gray-800">
-            View on Pexels <FaArrowRight />
-          </a>
           <button
-            onClick={() =>  handleDownload( selectedPhoto.src.original, `photo-${selectedPhoto.id}.jpg`)}
-              className="rounded-2xl px-4 py-3 bg-gray-500/50 text-gray-800 shadow hover:bg-gray-700/50 flex items-center gap-2">
-              <FiDownload /> Download
+            onClick={() => setSelectedPhoto(null)}
+            className="absolute top-5 right-5 text-white bg-black/50 rounded-full text-4xl p-2"
+          >
+            <ImCancelCircle />
           </button>
+
+          <img
+            src={selectedPhoto.src.large2x || selectedPhoto.src.large}
+            alt={selectedPhoto.photographer}
+            className="w-screen h-screen object-contain"
+          />
+
+          <div className="absolute bottom-6 flex flex-col sm:flex-row gap-4 items-center">
+            <a
+              href={selectedPhoto.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-row gap-2 justify-center items-center underline rounded-2xl px-4 py-3 text-gray-200 bg-gray-800/60"
+            >
+              View on Pexels <FaArrowRight />
+            </a>
+            <button
+              onClick={() =>
+                handleDownload(
+                  selectedPhoto.src.original,
+                  `photo-${selectedPhoto.id}.jpg`
+                )
+              }
+              className="rounded-2xl px-4 py-3 bg-gray-500/50 text-gray-200 shadow hover:bg-gray-700/50 flex items-center gap-2"
+            >
+              <FiDownload /> Download
+            </button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 }

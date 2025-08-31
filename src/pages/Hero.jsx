@@ -1,15 +1,7 @@
-import React, { useEffect, useState } from 'react'
-// import BgImg0 from "../assets/bgImg0.jpg";
-// import BgImg1 from "../assets/bgImg1.jpg";
-// import BgImg2 from "../assets/bgImg2.jpg";
-// import BgImg3 from "../assets/bgImg3.jpg";
-// import BgImg4 from "../assets/bgImg4.jpg";
-// import BgImg5 from "../assets/bgImg5.jpg";
-// import BgImg6 from "../assets/bgImg6.jpg";
-import { usePhotoStore } from '../store/photostore';
-import NavBar from '../components/NavBar';
-import Explore from './Explore';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { usePhotoStore } from "../store/photostore";
+import NavBar from "../components/NavBar";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const fetchTrending = usePhotoStore((state) => state.fetchTrending);
@@ -23,22 +15,19 @@ const Hero = () => {
   }, [fetchTrending]);
 
   const handleExplore = () => {
-    navigate("/explore")
-  }
+    navigate("/explore");
+  };
 
   useEffect(() => {
     if (photos.length === 0) return;
-
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % photos.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [photos]);
 
   return (
-    <div className="w-full max-h-full h-screen py-80 relative text-white overflow-hidden">
-    
+    <div className="w-full h-screen relative text-white overflow-hidden">
       <div className="absolute inset-0 z-0">
         {photos.map((photo, index) => (
           <img
@@ -51,13 +40,30 @@ const Hero = () => {
           />
         ))}
       </div>
-      <div className="absolute z-10 inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/50 z-10"></div>
       <NavBar />
-      <div className="relative z-20 flex flex-col gap-3 justify-center items-center h-full">
-        <h1 className="text-8xl font-bold">PhotoSphere</h1>
-        <p className="text-md">By Abubakar Ado Garba</p>
-        <p>All images are gotten from <a href="https://pexels.com" target='_blank' className='font-bold text-red-300 underline'> Pexels</a></p>
-        <button onClick={handleExplore} className="px-4 py-2 bg-white/15 text-white text-md rounded-3xl cursor-pointer hover:bg-white/30">
+      <div className="relative z-20 flex flex-col gap-4 justify-center items-center h-full px-4 text-center">
+        <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
+          PhotoSphere
+        </h1>
+        <p className="text-sm sm:text-base md:text-lg">
+          By Abubakar Ado Garba
+        </p>
+        <p className="text-xs sm:text-sm md:text-base">
+          All images are from{" "}
+          <a
+            href="https://pexels.com"
+            target="_blank"
+            rel="noreferrer"
+            className="font-bold text-red-300 underline"
+          >
+            Pexels
+          </a>
+        </p>
+        <button
+          onClick={handleExplore}
+          className="mt-4 px-6 py-2 text-sm sm:text-base bg-white/15 text-white rounded-3xl cursor-pointer hover:bg-white/30 transition"
+        >
           Explore
         </button>
       </div>
