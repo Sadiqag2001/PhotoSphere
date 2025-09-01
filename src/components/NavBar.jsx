@@ -47,7 +47,7 @@ function NavBar() {
         </button>
       </form>
 
-      <div className="hidden md:flex gap-6 cursor-pointer items-center text-white">
+      <div className="hidden lg:flex gap-6 cursor-pointer items-center text-white">
         <p onClick={() => navigate("/")} className="hover:text-gray-300">
           Home
         </p>
@@ -69,7 +69,7 @@ function NavBar() {
       </div>
 
       <div
-        className="md:hidden text-white cursor-pointer ml-3"
+        className="lg:hidden text-white cursor-pointer ml-3"
         onClick={() => setMenuOpen(true)}
       >
         <IoMenu size={28} />

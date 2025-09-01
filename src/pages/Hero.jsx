@@ -27,7 +27,7 @@ const Hero = () => {
   }, [photos]);
 
   return (
-    <div className="w-full h-screen relative text-white overflow-hidden">
+    <div className="w-full max-h-full py-80 relative text-white overflow-hidden">
       <div className="absolute inset-0 z-0">
         {photos.map((photo, index) => (
           <img
@@ -42,7 +42,7 @@ const Hero = () => {
       </div>
       <div className="absolute inset-0 bg-black/50 z-10"></div>
       <NavBar />
-      <div className="relative z-20 flex flex-col gap-4 justify-center items-center h-full px-4 text-center">
+      <div className="relative z-20 flex flex-col gap-3 justify-center items-center h-full text-center">
         <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
           PhotoSphere
         </h1>
@@ -62,7 +62,7 @@ const Hero = () => {
         </p>
         <button
           onClick={handleExplore}
-          className="mt-4 px-6 py-2 text-sm sm:text-base bg-white/15 text-white rounded-3xl cursor-pointer hover:bg-white/30 transition"
+          className="px-6 py-2 text-sm sm:text-base bg-white/15 text-white rounded-3xl cursor-pointer hover:bg-white/30 transition"
         >
           Explore
         </button>
