@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom"; 
 import axios from "axios";
 import { useUserStore } from "../store/userStore"; 
+// import { GrGoogle } from "react-icons/gr";
+// import { CgGoogle } from "react-icons/cg";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useUserStore();
+  const location = useLocation();
 
-  const [form, setForm] = useState({ username: "", password: "" });
+  const { loginWithEmail, loginWithGoogle } = useUserStore();
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const redirectPath = location.state?.from?.pathname || '/';
+
+ 
+
 
   useEffect(() => {
     if (photos.length === 0) return;
@@ -36,26 +43,47 @@ const Login = () => {
     fetchPopular();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.username || !form.password) {
+    if (!form.email || !form.password) {
       alert("You must fill in the fields");
       return;
     }
-    const fakeUser = { name: form.username, email: `${form.username}@photosphere.com` };
-    login(fakeUser);
-    alert("Logged in successfully");
-    navigate("/favourites");
+
+     try {
+      sessionStorage.setItem('redirectAfterLogin', redirectPath); 
+      await loginWithEmail(form.email, form.password);
+
+    } catch (error) {
+      console.error("Firebase Login Error (Email/Password):", error);
+      sessionStorage.removeItem('redirectAfterLogin'); 
+      let errorMessage = "Something went wrong. Please try again.";
+      if (error.code === "auth/invalid-credential") {
+        errorMessage = "Invalid email or password.";
+      } else if (error.code === "auth/user-disabled") {
+        errorMessage = "This user account has been disabled.";
+      }
+      alert(errorMessage);
+    }
   };
 
-  const handleGuestLogin = () => {
-    const fakeUser = { name: "Guest User", email: "guest@photosphere.com" };
-    login(fakeUser);
-    navigate("/favourites");
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     sessionStorage.setItem('redirectAfterLogin', redirectPath);
+  //     await loginWithGoogle();
+  //   } catch (error) {
+  //     console.error("Firebase Login Error (Google):", error);
+  //     sessionStorage.removeItem('redirectAfterLogin'); 
+  //     let errorMessage = "Something went wrong with Google sign-in. Please try again.";
+  //     if (error.code === "auth/popup-closed-by-user" || error.code === "auth/cancelled-popup-request") {
+  //       errorMessage = "Google sign-in was cancelled or interrupted. Please try again.";
+  //     }
+  //     alert(errorMessage);
+  //   }
+  // };
 
   return (
-    <div className="w-full h-auto bg-[#010f1b]  pt-30 flex items-center justify-center">
+    <div className="w-full h-auto bg-(--color-beige)  pt-30 pb-20 flex items-center justify-center">
       <div className="w-[90%] h-[90%] flex flex-col md:flex-row rounded-xl p-4 bg-[#01172b]">
         <div className="hidden md:block w-[50%] relative overflow-hidden rounded-xl">
           {photos.map((photo, index) => (
@@ -97,17 +125,18 @@ const Login = () => {
             Don&apos;t have an account?{" "}
             <span
               onClick={() => navigate("/register")}
-              className="underline text-[#b09cec] cursor-pointer"
+              className="underline text-blue cursor-pointer"
             >
               Register
             </span>
           </p>
-          <div className="flex flex-col gap-3 mb-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <input
               className="w-full h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
-              placeholder="Username"
-              value={form.username}
-              onChange={(e) => setForm({ ...form, username: e.target.value })}
+              placeholder="Email"
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
             <div className="w-full h-[48px] relative">
               <input
@@ -119,27 +148,26 @@ const Login = () => {
               />
               <span onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
-                  <IoEyeOff className="absolute right-3 top-[17px]" />
+                  <IoEyeOff className="absolute text-white right-3 top-[17px]" />
                 ) : (
-                  <IoEye className="absolute right-3 top-[17px]" />
+                  <IoEye className="absolute text-white right-3 top-[17px]" />
                 )}
               </span>
             </div>
-          </div>
 
-          <div
-            onClick={handleSubmit}
-            className="w-full bg-[#6d54b5] text-white mb-3 py-4 flex items-center justify-center rounded-[4px] cursor-pointer"
-          >
+          <button
+            type="submit"
+            className="w-full bg-(--color-beige) text-white mb-3 py-4 flex items-center justify-center rounded-[4px] cursor-pointer"
+            >
             Login
-          </div>
-
-          <div
-            onClick={handleGuestLogin}
-            className="w-full bg-gray-500 text-white mb-6 py-4 flex items-center justify-center rounded-[4px] cursor-pointer hover:bg-gray-600"
+          </button>
+            </form>
+          {/* <div
+            onClick={handleGoogleLogin}
+            className="w-full bg-blue-600 text-white mb-6 py-4 gap-2 flex items-center justify-center rounded-[4px] cursor-pointer hover:bg-blue-700"
           >
-            Continue as Guest
-          </div>
+            Login with Google <CgGoogle />
+          </div> */}
 
           <div className="flex text-[#dedede] items-center gap-3 pb-15">
             <hr className="w-[50%] opacity-50" />

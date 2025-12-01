@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { usePhotoStore } from "../store/photostore";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "../store/userStore"; 
 
 const Hero = () => {
   const fetchTrending = usePhotoStore((state) => state.fetchTrending);
@@ -9,7 +10,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const [currentIndex, setCurrentIndex] = useState(0);
-
+ 
   useEffect(() => {
     fetchTrending();
   }, [fetchTrending]);
@@ -41,7 +42,7 @@ const Hero = () => {
         ))}
       </div>
       <div className="absolute inset-0 bg-black/50 z-10"></div>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="relative z-20 flex flex-col gap-3 justify-center items-center h-full text-center">
         <h1 className="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
           PhotoSphere

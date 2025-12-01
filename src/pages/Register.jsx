@@ -4,10 +4,12 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUserStore } from "../store/userStore";
+import { db } from "../store/firebase"; 
+import { doc, setDoc } from "firebase/firestore"; 
 
 const Register = () => {
   const navigate = useNavigate();
-  const { setUser } = useUserStore();
+  const { registerWithEmail } = useUserStore();
 
   const [form, setForm] = useState({
     firstName: "",
@@ -63,21 +65,33 @@ const Register = () => {
       return;
     }
 
-    try {
-      const res = await fetch("https://dummyjson.com/users/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      console.log("Registered user:", data);
+     try {
+      const firebaseUser = await registerWithEmail(form.email, form.password);
 
-      setUser(data);
+      await setDoc(doc(db, "users", firebaseUser.uid), {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        username: form.username,
+        email: form.email,
+        profilePicture: null, 
+        createdAt: new Date(),
+      });
+
+      console.log("Registered user with Firebase Auth and saved data to Firestore:", firebaseUser.uid);
+
       alert("Account created successfully!");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
-      console.error("Registration error:", error);
-      alert("Something went wrong. Please try again.");
+      console.error("Firebase Registration Error:", error);
+      let errorMessage = "Something went wrong. Please try again.";
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "This email is already in use.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Please enter a valid email address.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password should be at least 6 characters.";
+      }
+      alert(errorMessage);
     }
   };
 

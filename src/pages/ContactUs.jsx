@@ -15,12 +15,12 @@ const ContactUs = () => {
   };
 
   return (
-    <div className='w-full min-h-screen bg-[#010f1b] py-16 px-6 sm:px-12 lg:px-24 text-gray-800 flex flex-col'>
+    <div className='w-full min-h-screen bg-(--color-beige) py-16 px-6 sm:px-12 lg:px-24 text-gray-800 flex flex-col'>
       <div className='flex justify-center items-center pb-10 text-4xl sm:text-5xl lg:text-6xl'>
         <h2 className='text-[#dedede] pt-5'>Contact Us</h2>
       </div>
 
-      <div className='flex flex-col lg:flex-row justify-center items-stretch bg-[#dedede] shadow-4xl rounded-2xl w-full lg:w-[90%] mx-auto'>
+      <div className='flex flex-col lg:flex-row justify-center items-stretch bg-[#dedede] border shadow-4xl rounded-2xl w-full lg:w-[90%] mx-auto'>
         
         <div className='relative flex flex-col p-6 sm:p-10 items-start w-full lg:w-[45%] h-auto'>
           <p className='absolute text-gray-800 opacity-10 text-[100px] sm:text-[150px] lg:text-[200px]'>1 1 0</p>
