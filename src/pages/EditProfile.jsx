@@ -145,7 +145,7 @@ function EditProfile() {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="text-sm">Bio</label>
           <input
             type="text"
@@ -154,7 +154,7 @@ function EditProfile() {
             onChange={(e) => setUsername(e.target.value)}
             required
           />
-        </div>
+        </div> */}
 
         <button
           type="submit"

@@ -1,48 +1,28 @@
 @keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 .skeleton-line,
-.skeleton-circle,
-.skeleton-navbar,
-.skeleton-main,
-.skeleton-card,
-.skeleton-footer {
-  background-color: #333; 
+.skeleton-circle {
+  background-color: #e0e0e0; 
   background-image: linear-gradient(
     to right,
-    #333 0%,
-    #444 20%,
-    #333 40%,
-    #333 100%
+    #e0e0e0 0%,
+    #f0f0f0 20%,
+    #e0e0e0 40%,
+    #e0e0e0 100%
   );
   background-repeat: no-repeat;
   background-size: 1000px 100%;
-  animation: shimmer 1.5s infinite linear; 
-  overflow: hidden; 
-}
-
-.skeleton-container {
-  background-color: #1a202c;
-}
-
-.skeleton-navbar {
-  height: 64px; 
-}
-
-.skeleton-main {
-  min-height: calc(100vh - 64px - 64px); 
-}
-
-.skeleton-footer {
-  height: 64px; 
+  animation: shimmer 1.5s infinite linear;
+  overflow: hidden;
 }
 
 .skeleton-circle {
   border-radius: 50%;
+}
+
+.skeleton-container {
+  background-color: #f9f9f9; 
 }
