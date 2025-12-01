@@ -15,6 +15,7 @@ import { useEffect, useRef } from 'react';
 import { useUserStore } from './store/userStore';
 import EditProfile from './pages/EditProfile'
 import SkeletonLoader from './components/SkeletonLoader'
+import { Toaster } from "react-hot-toast";
 
 function Home() {
   return (
@@ -78,6 +79,7 @@ function App() {
   return (
     // <Router>
       <div className="flex flex-col min-h-screen">
+      <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
         <NavBar />
         <main className="flex-grow">
           <Routes>

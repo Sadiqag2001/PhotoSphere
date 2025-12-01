@@ -4,8 +4,9 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUserStore } from "../store/userStore";
-import { db } from "../store/firebase"; 
-import { doc, setDoc } from "firebase/firestore"; 
+import { db } from "../store/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,10 +21,12 @@ const Register = () => {
     agree: false,
   });
 
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Auto image slideshow
   useEffect(() => {
     if (photos.length === 0) return;
     const interval = setInterval(() => {
@@ -32,6 +35,7 @@ const Register = () => {
     return () => clearInterval(interval);
   }, [photos]);
 
+  // Fetch Pexels images
   useEffect(() => {
     const fetchPopular = async () => {
       try {
@@ -46,26 +50,27 @@ const Register = () => {
     fetchPopular();
   }, []);
 
+  // Inline Validation
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!form.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!form.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.username.trim()) newErrors.username = "Username is required";
+    if (!form.password.trim()) newErrors.password = "Password is required";
+    if (!form.agree) newErrors.agree = "You must agree to continue";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.agree) {
-      alert("You must agree to the terms and conditions");
-      return;
-    }
+    if (!validateForm()) return;
 
-    if (
-      !form.firstName.trim() ||
-      !form.lastName.trim() ||
-      !form.email.trim() ||
-      !form.username.trim() ||
-      !form.password.trim()
-    ) {
-      alert("All fields are required");
-      return;
-    }
-
-     try {
+    try {
       const firebaseUser = await registerWithEmail(form.email, form.password);
 
       await setDoc(doc(db, "users", firebaseUser.uid), {
@@ -73,17 +78,17 @@ const Register = () => {
         lastName: form.lastName,
         username: form.username,
         email: form.email,
-        profilePicture: null, 
+        profilePicture: null,
         createdAt: new Date(),
       });
 
-      console.log("Registered user with Firebase Auth and saved data to Firestore:", firebaseUser.uid);
-
-      alert("Account created successfully!");
+      toast.success("Account created successfully!");
       navigate("/");
     } catch (error) {
       console.error("Firebase Registration Error:", error);
+
       let errorMessage = "Something went wrong. Please try again.";
+
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "This email is already in use.";
       } else if (error.code === "auth/invalid-email") {
@@ -91,14 +96,16 @@ const Register = () => {
       } else if (error.code === "auth/weak-password") {
         errorMessage = "Password should be at least 6 characters.";
       }
-      alert(errorMessage);
+
+      setErrors({ form: errorMessage });
     }
   };
 
   return (
     <div className="w-full h-auto bg-[#010f1b] pt-20 flex items-center justify-center">
       <div className="w-[90%] h-[90%] flex flex-col md:flex-row rounded-xl p-4 bg-[#01172b]">
-        
+
+        {/* Left Image Section */}
         <div className="hidden md:block w-[50%] relative overflow-hidden rounded-xl">
           {photos.map((photo, index) => (
             <img
@@ -111,76 +118,92 @@ const Register = () => {
             />
           ))}
 
-          <div className="w-[calc(100%-16px)] h-full p-4 flex flex-col justify-between absolute">
-            <div className="flex justify-between items-center gap-4">
+          <div className="absolute inset-0 p-4 flex flex-col justify-between">
+            <div className="flex justify-between items-center">
               <h1 className="text-xl font-bold text-white">PhotoSphere</h1>
               <div
                 onClick={() => navigate("/")}
-                className="bg-amber-50/30 text-white cursor-pointer text-[10px] rounded-2xl flex items-center justify-center gap-2 py-1.5 px-2"
+                className="bg-amber-50/30 text-white cursor-pointer text-[10px] rounded-xl flex items-center gap-2 py-1.5 px-2"
               >
-                Back to Home page <FaArrowRight />
+                Back to Home <FaArrowRight />
               </div>
             </div>
-            <div className="w-full flex flex-col items-center justify-center text-white">
-              <h3 className="text-lg">Capturing Moments,</h3>
+
+            <div className="flex flex-col items-center text-white pb-5">
+              <h3 className="text-lg">Capturing Moments</h3>
               <h3 className="text-lg">Creating Memories</h3>
-              <div className="flex gap-3 mt-6 pb-2">
-                <div className="w-4.5 h-[2.5px] bg-white/45 rounded-[6px]" />
-                <div className="w-4.5 h-[2.5px] bg-white/45 rounded-[6px]" />
-                <div className="w-5.5 h-[2.5px] bg-white rounded-[6px]" />
-              </div>
             </div>
           </div>
         </div>
 
-        <div className="w-full md:w-[50%] py-10 px-6 md:px-10 flex flex-col justify-center text-white">
+        {/* Form Section */}
+        <div className="w-full md:w-[50%] py-10 px-6 md:px-10 text-white">
           <h3 className="text-2xl font-bold pt-5">Create an Account</h3>
           <p className="mb-6 text-[12px]">
             Already have an account?{" "}
-            <span
-              onClick={() => navigate("/login")}
-              className="underline text-[#b09cec] cursor-pointer"
-            >
+            <span onClick={() => navigate("/login")} className="underline text-[#b09cec] cursor-pointer">
               Log in
             </span>
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 mb-6">
+
+            {/* Name Fields */}
             <div className="flex flex-col md:flex-row gap-3">
-              <input
-                className="w-full md:w-1/2 h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
-                placeholder="First name"
-                value={form.firstName}
-                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-              />
-              <input
-                className="w-full md:w-1/2 h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
-                placeholder="Last name"
-                value={form.lastName}
-                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-              />
+              <div className="w-full">
+                <input
+                  className="w-full h-[48px] px-3 outline-none bg-white/5 rounded-sm text-sm placeholder:text-white/40"
+                  placeholder="First name"
+                  value={form.firstName}
+                  onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                />
+                {errors.firstName && <p className="text-red-400 text-xs">{errors.firstName}</p>}
+              </div>
+
+              <div className="w-full">
+                <input
+                  className="w-full h-[48px] px-3 outline-none bg-white/5 rounded-sm text-sm placeholder:text-white/40"
+                  placeholder="Last name"
+                  value={form.lastName}
+                  onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                />
+                {errors.lastName && <p className="text-red-400 text-xs">{errors.lastName}</p>}
+              </div>
             </div>
-            <input
-              className="w-full h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
-              placeholder="Email"
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-            <input
-              className="w-full h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
-              placeholder="Username"
-              value={form.username}
-              onChange={(e) => setForm({ ...form, username: e.target.value })}
-            />
-            <div className="w-full h-[48px] relative">
+
+            {/* Email */}
+            <div>
               <input
-                className="w-full h-full px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
+                className="w-full h-[48px] px-3 outline-none bg-white/5 rounded-sm text-sm placeholder:text-white/40"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+              {errors.email && <p className="text-red-400 text-xs">{errors.email}</p>}
+            </div>
+
+            {/* Username */}
+            <div>
+              <input
+                className="w-full h-[48px] px-3 outline-none bg-white/5 rounded-sm text-sm placeholder:text-white/40"
+                placeholder="Username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+              />
+              {errors.username && <p className="text-red-400 text-xs">{errors.username}</p>}
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <input
+                className="w-full h-[48px] px-3 outline-none bg-white/5 rounded-sm text-sm placeholder:text-white/40"
                 placeholder="Password"
                 type={showPassword ? "text" : "password"}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
+              {errors.password && <p className="text-red-400 text-xs">{errors.password}</p>}
+
               <span onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
                   <IoEyeOff className="absolute right-3 top-[17px]" />
@@ -190,26 +213,26 @@ const Register = () => {
               </span>
             </div>
 
+            {/* Checkbox */}
             <div className="flex items-center gap-2 mt-2">
               <input
                 type="checkbox"
                 checked={form.agree}
                 onChange={(e) => setForm({ ...form, agree: e.target.checked })}
               />
-              <p className="text-sm">
-                I agree to the{" "}
-                <span className="underline text-[#b09cec] cursor-pointer">
-                  Terms and Conditions
-                </span>
-              </p>
+              <p className="text-sm">I agree to the Terms and Conditions</p>
             </div>
+            {errors.agree && <p className="text-red-400 text-xs">{errors.agree}</p>}
 
-            <button
-              type="submit"
-              className="w-full bg-[#6d54b5] text-white mb-3 py-4 flex items-center justify-center rounded-[4px] cursor-pointer"
-            >
+            {/* Submit */}
+            <button className="w-full bg-[#6d54b5] py-4 rounded-md">
               Create Account
             </button>
+
+            {/* Form-level Errors */}
+            {errors.form && (
+              <p className="text-red-400 text-sm text-center mt-2">{errors.form}</p>
+            )}
           </form>
         </div>
       </div>

@@ -105,9 +105,7 @@ const Profile = () => {
             <p className="text-white/70 text-sm">@{data.username}</p>
             <p className="text-white/50 text-sm mt-1">{data.email}</p>
 
-            {data.bio && (
-              <p className="mt-3 text-sm text-white/80 w-[90%]"> Bio: {data.bio || "add a bio"}</p>
-            )}
+              <p className="mt-3 text-sm text-white/80 w-[90%]">{data.bio || "no bio yet"}</p>
 
             <div className="mt-4 flex items-center gap-3">
             <button

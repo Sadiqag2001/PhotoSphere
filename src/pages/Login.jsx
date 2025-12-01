@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useNavigate, useLocation } from "react-router-dom"; 
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useUserStore } from "../store/userStore"; 
-// import { GrGoogle } from "react-icons/gr";
-// import { CgGoogle } from "react-icons/cg";
+import { useUserStore } from "../store/userStore";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,10 +15,20 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [photos, setPhotos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const redirectPath = location.state?.from?.pathname || '/';
 
- 
+  const [errors, setErrors] = useState({});
 
+  const redirectPath = location.state?.from?.pathname || "/";
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    if (!form.password.trim()) newErrors.password = "Password is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     if (photos.length === 0) return;
@@ -45,25 +54,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      alert("You must fill in the fields");
-      return;
-    }
 
-     try {
-      sessionStorage.setItem('redirectAfterLogin', redirectPath); 
+    if (!validateForm()) return; 
+
+    try {
+      sessionStorage.setItem("redirectAfterLogin", redirectPath);
       await loginWithEmail(form.email, form.password);
-
     } catch (error) {
       console.error("Firebase Login Error (Email/Password):", error);
-      sessionStorage.removeItem('redirectAfterLogin'); 
+      sessionStorage.removeItem("redirectAfterLogin");
+
       let errorMessage = "Something went wrong. Please try again.";
+
       if (error.code === "auth/invalid-credential") {
         errorMessage = "Invalid email or password.";
       } else if (error.code === "auth/user-disabled") {
         errorMessage = "This user account has been disabled.";
       }
-      alert(errorMessage);
+
+      toast.error(errorMessage);
     }
   };
 
@@ -73,7 +82,7 @@ const Login = () => {
   //     await loginWithGoogle();
   //   } catch (error) {
   //     console.error("Firebase Login Error (Google):", error);
-  //     sessionStorage.removeItem('redirectAfterLogin'); 
+  //     sessionStorage.removeItem('redirectAfterLogin');
   //     let errorMessage = "Something went wrong with Google sign-in. Please try again.";
   //     if (error.code === "auth/popup-closed-by-user" || error.code === "auth/cancelled-popup-request") {
   //       errorMessage = "Google sign-in was cancelled or interrupted. Please try again.";
@@ -83,8 +92,9 @@ const Login = () => {
   // };
 
   return (
-    <div className="w-full h-auto bg-(--color-beige)  pt-30 pb-20 flex items-center justify-center">
+    <div className="w-full h-auto bg-(--color-beige) pt-30 pb-20 flex items-center justify-center">
       <div className="w-[90%] h-[90%] flex flex-col md:flex-row rounded-xl p-4 bg-[#01172b]">
+        
         <div className="hidden md:block w-[50%] relative overflow-hidden rounded-xl">
           {photos.map((photo, index) => (
             <img
@@ -107,9 +117,11 @@ const Login = () => {
                 Back to Home page <FaArrowRight />
               </div>
             </div>
+
             <div className="w-full flex flex-col items-center justify-center text-white">
               <h3 className="text-lg">Capturing Moments,</h3>
               <h3 className="text-lg">Creating Memories</h3>
+
               <div className="flex gap-3 mt-6 pb-2">
                 <div className="w-4.5 h-[2.5px] bg-white/45 rounded-[6px]" />
                 <div className="w-4.5 h-[2.5px] bg-white/45 rounded-[6px]" />
@@ -120,32 +132,43 @@ const Login = () => {
         </div>
 
         <div className="w-full md:w-[50%] py-10 px-6 md:px-10 flex flex-col justify-center text-gray-800 bg-[#01172b] rounded">
+          
           <h3 className="text-2xl text-[#dedede] font-bold md:pt-1">Welcome back</h3>
           <p className="mb-6 text-[15px] text-[#dedede]">
             Don&apos;t have an account?{" "}
             <span
               onClick={() => navigate("/register")}
-              className="underline text-blue cursor-pointer"
+              className="underline text-[#dedede]/50 cursor-pointer"
             >
               Register
             </span>
           </p>
+
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+
             <input
-              className="w-full h-[48px] px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
+              className="w-full h-[48px] px-3 outline-none text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
               placeholder="Email"
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
+
+            {errors.email && (
+              <p className="text-red-400 text-xs">
+                {errors.email}
+              </p>
+            )}
+
             <div className="w-full h-[48px] relative">
               <input
-                className="w-full h-full px-3 text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
+                className="w-full h-full px-3 outline-none text-white text-sm placeholder:text-white/40 bg-white/5 rounded-sm"
                 placeholder="Password"
                 type={showPassword ? "text" : "password"}
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
+
               <span onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
                   <IoEyeOff className="absolute text-white right-3 top-[17px]" />
@@ -155,13 +178,20 @@ const Login = () => {
               </span>
             </div>
 
-          <button
-            type="submit"
-            className="w-full bg-(--color-beige) text-white mb-3 py-4 flex items-center justify-center rounded-[4px] cursor-pointer"
+            {errors.password && (
+              <p className="text-red-400 text-xs">
+                {errors.password}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-[#dedede] text-[#01172b] mb-3 py-4 flex items-center justify-center rounded-[4px] cursor-pointer"
             >
-            Login
-          </button>
-            </form>
+              Login
+            </button>
+          </form>
+
           {/* <div
             onClick={handleGoogleLogin}
             className="w-full bg-blue-600 text-white mb-6 py-4 gap-2 flex items-center justify-center rounded-[4px] cursor-pointer hover:bg-blue-700"
@@ -171,11 +201,12 @@ const Login = () => {
 
           <div className="flex text-[#dedede] items-center gap-3 pb-15">
             <hr className="w-[50%] opacity-50" />
-            <span className="text-[10px] text-center opacity-50">
+            <span className="text-[10px] opacity-50 text-center">
               login to access your favourites
             </span>
             <hr className="w-[50%] opacity-50" />
           </div>
+
         </div>
       </div>
     </div>

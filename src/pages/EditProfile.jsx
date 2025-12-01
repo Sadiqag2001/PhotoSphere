@@ -4,6 +4,7 @@ import { useUserStore } from "../store/userStore";
 import { db, storage } from "../store/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import toast from "react-hot-toast";
 
 function EditProfile() {
   const navigate = useNavigate();
@@ -72,12 +73,12 @@ function EditProfile() {
         profilePicture: imageURL,
       });
 
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       navigate("/profile");
 
     } catch (error) {
       console.error(error);
-      alert("An error occurred while updating your profile.");
+      toast.error("An error occurred while updating your profile.");
     }
 
     setLoading(false);
@@ -93,7 +94,7 @@ function EditProfile() {
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center gap-3">
-          <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-gray-300">
+          <div className="w-28 h-28 rounded-full overflow-hidden border-2 p-2 border-gray-300">
             <img
               src={previewImage || profilePicture || "/default-avatar.png"}
               alt="Profile"
@@ -145,18 +146,18 @@ function EditProfile() {
           />
         </div>
 
-        {/* <div>
+        <div>
           <label className="text-sm">Bio</label>
           <input
             type="text"
             className="w-full p-3 rounded-lg bg-[#002238]/20 border-b border-gray-600 outline-none mt-1"
             value={bio}
-            onChange={(e) => setUsername(e.target.value)}
-            required
+            onChange={(e) => setBio(e.target.value)}
           />
-        </div> */}
+        </div>
         <div className="flex flex-row gap-2">
         <button 
+        type="button"
         className=" w-full border-2 border-white text-white hover:border-white/50 hover:text-white/50 px-4 py-3 rounded-lg mt-2 font-semibold"
         onClick={() => navigate("/profile")}
         >
