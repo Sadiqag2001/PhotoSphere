@@ -155,7 +155,13 @@ function EditProfile() {
             required
           />
         </div> */}
-
+        <div className="flex flex-row gap-2">
+        <button 
+        className=" w-full border-2 border-white text-white hover:border-white/50 hover:text-white/50 px-4 py-3 rounded-lg mt-2 font-semibold"
+        onClick={() => navigate("/profile")}
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={loading}
@@ -163,6 +169,7 @@ function EditProfile() {
         >
           {loading ? "Updating..." : "Save Changes"}
         </button>
+        </div>
       </form>
     </div>
   );
