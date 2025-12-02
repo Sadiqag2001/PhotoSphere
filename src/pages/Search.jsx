@@ -24,7 +24,7 @@ function Search() {
 
   return (
     <div className="p-10 mt-15">
-      <h2 className="text-5xl text-gray-800 font-bold mb-6">Search results</h2>
+      <h2 className="text-5xl max-sm:text-2xl text-gray-800 font-bold mb-6">Search results</h2>
 
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
         {photos.length > 0 ? (

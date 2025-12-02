@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ImCancelCircle } from "react-icons/im";
-import { CiHeart } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart } from "react-icons/fa";
 import { usePhotoStore } from "../store/photostore";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
@@ -60,15 +59,15 @@ function ExplorePreview() {
               <p className="font-normal text-sm">By {photo.photographer}</p>
               <button
                   onClick={() =>
-                    isFavourite(photo.id)
-                      ? removeFavourite(photo.id)
+                    isFavourite(photo.id.toString())
+                      ? removeFavourite(photo.id.toString()) 
                       : addFavourite(photo)
                   }
-                  className={`text-4xl ${
-                    isFavourite(photo.id) ? "text-red-600" : "text-gray-600"
+                  className={`text-3xl sm:text-4xl ${
+                    isFavourite(photo.id.toString()) ? "text-red-600" : "text-gray-400" 
                   }`}
                 >
-                  <CiHeart />
+                  <FaHeart />
                 </button>
             </div>
           </div>

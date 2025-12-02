@@ -3,7 +3,7 @@ import { ImCancelCircle } from "react-icons/im";
 import { CiHeart } from "react-icons/ci";
 import { usePhotoStore } from "../store/photostore";
 import { FiDownload } from "react-icons/fi";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaHeart } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 
 function Explore() {
@@ -38,7 +38,7 @@ function Explore() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-10 py-10 mt-10">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl text-gray-800 font-bold mb-6">
+      <h2 className=" max-sm:text-2xl text-5xl text-gray-800 font-bold mb-6">
         Explore
       </h2>
 
@@ -61,15 +61,15 @@ function Explore() {
                 <p className="font-normal text-sm">By {photo.photographer}</p>
                 <button
                   onClick={() =>
-                    isFavourite(photo.id)
-                      ? removeFavourite(photo.id)
+                    isFavourite(photo.id.toString())
+                      ? removeFavourite(photo.id.toString()) 
                       : addFavourite(photo)
                   }
                   className={`text-3xl sm:text-4xl ${
-                    isFavourite(photo.id) ? "text-red-600" : "text-gray-600"
+                    isFavourite(photo.id.toString()) ? "text-red-600" : "text-gray-400" 
                   }`}
                 >
-                  <CiHeart />
+                  <FaHeart />
                 </button>
               </div>
             </div>

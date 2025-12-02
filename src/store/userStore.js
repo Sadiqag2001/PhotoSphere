@@ -9,35 +9,47 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "./firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-
-const FAVS_STORAGE_KEY = "photosphere_favourites";
+import {
+  doc,
+  setDoc,
+  deleteDoc,
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+  serverTimestamp,
+  getDoc,
+} from "firebase/firestore";
 
 export const useUserStore = create((set, get) => ({
   user: null,
-  favourites: JSON.parse(localStorage.getItem(FAVS_STORAGE_KEY)) || [],
+  favourites: [],
+  favouritesLoading: true,
+  unsubscribeFromFavorites: null,
   isLoadingAuth: true,
 
- registerWithEmail: async (email, password) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
-  } catch (error) {
-    console.error("Error registering with email:", error.message);
-    throw error;
-  }
- },
+  // --- Authentication Actions ---
+  registerWithEmail: async (email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await get().ensureFirestoreProfileExists(userCredential.user);
+      return userCredential.user;
+    } catch (error) {
+      console.error("Error registering with email:", error.message);
+      throw error;
+    }
+  },
 
- loginWithEmail: async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    await get().ensureFirestoreProfileExists(userCredential.user);
-    return userCredential.user;
-  } catch (error) {
-    console.error("Error logging in with email:", error.message);
-    throw error;
-  }
- }, 
+  loginWithEmail: async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await get().ensureFirestoreProfileExists(userCredential.user);
+      return userCredential.user;
+    } catch (error) {
+      console.error("Error logging in with email:", error.message);
+      throw error;
+    }
+  },
 
   loginWithGoogle: async () => {
     try {
@@ -49,7 +61,7 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-    handleGoogleRedirectResult: async () => {
+  handleGoogleRedirectResult: async () => {
     try {
       const result = await getRedirectResult(auth);
       if (result) {
@@ -64,18 +76,18 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-logout: async () => {
-  try {
-    await signOut(auth);
-    localStorage.removeItem(FAVS_STORAGE_KEY);
-    set({ user: null, favourites: [] });
-  } catch (error) {
-    console.error("Error signing out:", error.message);
-    throw error;
-  }
-},
+  logout: async () => {
+    try {
+      await signOut(auth);
+      get().setUser(null);
+    } catch (error) {
+      console.error("Error signing out:", error.message);
+      throw error;
+    }
+  },
 
-ensureFirestoreProfileExists: async (firebaseUser) => {
+  // --- Profile Management ---
+  ensureFirestoreProfileExists: async (firebaseUser) => {
     const userDocRef = doc(db, "users", firebaseUser.uid);
     try {
       const userDocSnap = await getDoc(userDocRef);
@@ -96,7 +108,7 @@ ensureFirestoreProfileExists: async (firebaseUser) => {
           lastName: authLastName,
           email: firebaseUser.email,
           profilePicture: authProfilePicture,
-          createdAt: new Date(),
+          createdAt: serverTimestamp(),
         };
         hasDataChanged = true;
       } else {
@@ -121,8 +133,8 @@ ensureFirestoreProfileExists: async (firebaseUser) => {
             hasDataChanged = true;
         }
 
-        if (!existingData.createdAt) { 
-          dataToUpdate.createdAt = new Date();
+        if (!existingData.createdAt) {
+          dataToUpdate.createdAt = serverTimestamp();
           hasDataChanged = true;
         }
       }
@@ -133,49 +145,115 @@ ensureFirestoreProfileExists: async (firebaseUser) => {
 
     } catch (error) {
       console.error("Error ensuring Firestore profile exists:", error);
+      throw error;
     }
   },
 
- initAuthListener: () => {
-  onAuthStateChanged(auth, async (firebaseUser) => {
+  // --- Favorites Management ---
+
+  setUser: (user) => {
+    set({ user });
+    get().setupFavoritesListener(user);
+  },
+
+  setupFavoritesListener: (user) => {
+    const currentUnsubscribe = get().unsubscribeFromFavorites;
+    if (currentUnsubscribe) {
+      currentUnsubscribe();
+    }
+
+    if (user) {
+      const favoritesCollectionRef = collection(db, 'users', user.uid, 'favorites');
+      const q = query(favoritesCollectionRef, orderBy('favoritedAt', 'desc'));
+
+      set({ favouritesLoading: true });
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const newFavourites = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        set({ favourites: newFavourites, favouritesLoading: false });
+      }, (error) => {
+        console.error("DEBUG: ERROR in favorites listener:", error);
+        set({ favourites: [], favouritesLoading: false });
+      });
+
+      set({ unsubscribeFromFavorites: unsubscribe });
+    } else {
+      set({ favourites: [], favouritesLoading: false });
+    }
+  },
+
+  addFavourite: async (photo) => {
+    const user = get().user;
+    if (!user) {
+      console.warn("User not logged in. Cannot add favorite.");
+      return;
+    }
+
     try {
-      const redirectResult = await get().handleGoogleRedirectResult();
-
-      if (redirectResult) {
-        set({ user: redirectResult });
-        await get().ensureFirestoreProfileExists(redirectResult);
-        return;
-      }
-
-      if (firebaseUser) {
-        set({ user: firebaseUser });
-        await get().ensureFirestoreProfileExists(firebaseUser);
-      } else {
-        set({ user: null, favourites: [] });
-        localStorage.removeItem(FAVS_STORAGE_KEY);
-      }
+      const favoriteDocRef = doc(db, 'users', user.uid, 'favorites', photo.id.toString());
+      await setDoc(favoriteDocRef, {
+        ...photo,
+        favoritedAt: serverTimestamp(),
+      });
+      console.log("Photo added to favorites in Firestore:", photo.id);
     } catch (error) {
-      console.error("Auth init error:", error);
-      set({ user: null, favourites: [] });
-      localStorage.removeItem(FAVS_STORAGE_KEY);
-    } finally {
-      set({ isLoadingAuth: false });
-    }
-  });
-},
-
-  addFavourite: (photo) => {
-    const currentFavs = get().favourites;
-    if (!currentFavs.find((p) => p.id === photo.id)) {
-      const newFavs = [...currentFavs, photo];
-      localStorage.setItem(FAVS_STORAGE_KEY, JSON.stringify(newFavs));
-      set({ favourites: newFavs });
+      console.error("Error adding favorite to Firestore:", error);
     }
   },
 
-  removeFavourite: (id) => {
-    const newFavs = get().favourites.filter((p) => p.id !== id);
-    localStorage.setItem(FAVS_STORAGE_KEY, JSON.stringify(newFavs));
-    set({ favourites: newFavs });
+  removeFavourite: async (photoId) => {
+    const user = get().user;
+    if (!user) {
+      console.warn("User not logged in. Cannot remove favorite.");
+      return;
+    }
+
+    try {
+      const favoriteDocRef = doc(db, 'users', user.uid, 'favorites', photoId.toString());
+      await deleteDoc(favoriteDocRef);
+      console.log("Photo removed from favorites in Firestore:", photoId);
+    } catch (error) {
+      console.error("Error removing favorite from Firestore:", error);
+    }
   },
+
+  // --- Auth State Change Listener (should be called once at app startup) ---
+  initAuthListener: () => {
+    return onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+
+        const redirectResult = await get().handleGoogleRedirectResult();
+
+        if (redirectResult) {
+          get().setUser(redirectResult);
+          return;
+        }
+
+        if (firebaseUser) {
+          get().setUser(firebaseUser);
+          await get().ensureFirestoreProfileExists(firebaseUser);
+        } else {
+          get().setUser(null);
+        }
+      } catch (error) {
+        console.error("DEBUG: Auth init error:", error); 
+        get().setUser(null);
+      } finally {
+        set({ isLoadingAuth: false });
+      }
+    });
+  },
+
+  cleanup: () => {
+    const currentUnsubscribe = get().unsubscribeFromFavorites;
+    if (currentUnsubscribe) {
+      currentUnsubscribe();
+      set({ unsubscribeFromFavorites: null });
+    }
+    set({ user: null, favourites: [], favouritesLoading: false });
+  }
 }));
