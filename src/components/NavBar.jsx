@@ -65,59 +65,64 @@ function NavBar() {
         PhotoSphere
       </h1>
 
-      <div onClick={handleSubmit} 
-        className="flex-1 mx-4 flex items-center relative max-w-md border rounded-3xl pl-4 pr-2 py-3 ">
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 mx-4 flex items-center relative max-w-md"
+            >
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className={`focus:outline-none placeholder:text-gray-300  
-                  ${isHome 
-              ? "border-white text-white placeholder:text-gray-300 focus:ring-gray-200" 
-              : "border-black text-black placeholder:text-gray-500 focus:ring-gray-300"
-            }`}
                 placeholder="What are you looking for?"
-              />
-              <div   className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-black p-2 rounded-full hover:bg-blue-600">
-              <ImSearch size={20}/>
-              </div>
-            </div>
+                className={`w-full pl-4 pr-10 py-3 rounded-3xl border focus:outline-none text-sm bg-transparent
+                    ${isHome 
+                    ? "border-white text-white placeholder:text-gray-300 focus:ring-gray-200" 
+                    : "border-black text-black placeholder:text-gray-500 focus:ring-gray-300"
+                  }`}
+        />
+        <button
+          type="submit"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600"
+        >
+          <ImSearch />
+        </button>
+      </form>
 
       <div className={`hidden lg:flex gap-6 cursor-pointer items-center ${isHome ? "text-white" : "text-black"}`}>
-  <p onClick={() => navigate("/")} className="hover:opacity-70">Home</p>
-  <p onClick={() => navigate("/explore")} className="hover:opacity-70">Explore</p>
-  <p onClick={() => navigate("/favourites")} className="hover:opacity-70">Favourites</p>
-  <p onClick={() => navigate("/contact")} className="hover:opacity-70">Contact Us</p>
+        <p onClick={() => navigate("/")} className="hover:opacity-70">Home</p>
+        <p onClick={() => navigate("/explore")} className="hover:opacity-70">Explore</p>
+        <p onClick={() => navigate("/favourites")} className="hover:opacity-70">Favourites</p>
+        <p onClick={() => navigate("/contact")} className="hover:opacity-70">Contact Us</p>
 
-  {user ? (
-    <div className="flex items-center gap-3">
-      {userProfile?.firstName && (
-        <span className="whitespace-nowrap">Hey, {userProfile.firstName}</span>
-      )}
+        {user ? (
+          <div className="flex items-center gap-3">
+            {userProfile?.firstName && (
+              <span className="whitespace-nowrap">Hey, {userProfile.firstName}</span>
+            )}
 
-      {userProfile?.profilePicture ? (
-        <img
-          src={userProfile.profilePicture}
-          alt="Profile"
-          className="w-8 h-8 rounded-full object-cover cursor-pointer"
-          onClick={() => navigate("/profile")}
-        />
-      ) : (
-        <RxAvatar
-          size={28}
-          className="cursor-pointer"
-          onClick={() => navigate("/profile")}
-        />
-      )}
-    </div>
-  ) : (
-    <RxAvatar
-      size={28}
-      className="cursor-pointer"
-      onClick={() => navigate("/login")}
-    />
-  )}
-</div>
+            {userProfile?.profilePicture ? (
+              <img
+                src={userProfile.profilePicture}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                onClick={() => navigate("/profile")}
+              />
+            ) : (
+              <RxAvatar
+                size={28}
+                className="cursor-pointer"
+                onClick={() => navigate("/profile")}
+              />
+            )}
+          </div>
+        ) : (
+          <RxAvatar
+            size={28}
+            className="cursor-pointer"
+            onClick={() => navigate("/login")}
+          />
+        )}
+      </div>
 
       <div
         className={`lg:hidden cursor-pointer ml-3 
